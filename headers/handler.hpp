@@ -13,31 +13,35 @@ private:
     std::ofstream m_image_file;
 
 public:
-    ImageHandler() : m_counter(0) {
-        m_width = 400;
-        m_height = 400;
-
-        m_image_file.open("image.ppm");
-        m_image_file << "P3\n" << m_width << " " << m_height << "\n255\n";
+    ImageHandler() {
+        constructor(400, 400, "image.ppm");
     }
 
-    ImageHandler(int t_width, int t_height) : m_counter(0) {
-        m_width = t_width;
-        m_height = t_height;
-
-        m_image_file.open("image.ppm");
-        m_image_file << "P3\n" << m_width << " " << m_height << "\n255\n";
+    ImageHandler(int t_width, int t_height) {
+        constructor(t_width, t_height, "image.ppm");
     }
 
-    ImageHandler(int t_width, int t_height, std::string t_filename) : m_counter(0) {
+    ImageHandler(int t_width, int t_height, std::string t_filename) {
+        constructor(t_width, t_height, t_filename);
+    }
+
+    void constructor(int t_width, int t_height, std::string t_filename) {
         m_width = t_width;
         m_height = t_height;
 
         m_image_file.open(t_filename.c_str());
         m_image_file << "P3\n" << m_width << " " << m_height << "\n255\n";
+
+        // Counter of added pixels
+        m_counter = 0;
     }
 
-    ImageHandler(const ImageHandler& t_handler) {}
+    ImageHandler(const ImageHandler& t_handler) {
+        m_width = t_handler.getWidth();
+        m_height = t_handler.getHeight();
+
+        m_counter = t_handler.getCounter();
+    }
 
     int getWidth() const { return m_width; }
 
@@ -47,6 +51,7 @@ public:
 
     void putPixel(vector color) {
         if (m_image_file.is_open()) {
+            // Adds pixel color to image file
             m_image_file << color << "\n";
             m_counter += 1;
 
@@ -57,9 +62,8 @@ public:
     void close() {
         int num_pixels = m_width * m_height;
 
-        for (int i = m_counter + 1; i < num_pixels; i++) {
+        for (int i = m_counter + 1; i < num_pixels; i++)
             m_image_file << vector() << "\n";
-        }
 
         if (m_image_file.is_open()) m_image_file.close();
     }

@@ -60,11 +60,7 @@ public:
     }
 };
 
-// point is just an alias for vector, but useful for geometric clarity
 using point = vector;
-
-
-// Vector Utility Functions
 
 inline std::ostream& operator<<(std::ostream &out, const vector &v) {
     return out << v.r() << " " << v.g() << " " << v.b();
