@@ -4,14 +4,13 @@
 #include <cmath>
 #include <iostream>
 
-using std::sqrt;
-
 
 class vector {
 public:
     double e[3];
 
     vector() : e{0.0, 0.0, 0.0} {}
+
     vector(double e0, double e1, double e2) : e{e0, e1, e2} {}
 
     double x() const { return e[0]; }
@@ -56,12 +55,14 @@ public:
     }
 
     double norm() const {
-        return sqrt(squared_norm());
+        return std::sqrt(squared_norm());
     }
 };
 
+
 using color = vector;
 using point = vector;
+
 
 inline std::ostream& operator<<(std::ostream &out, const vector &v) {
     return out << v.r() << " " << v.g() << " " << v.b();
@@ -116,6 +117,10 @@ inline vector cross(const vector &u, const vector &v) {
 
 inline vector normalize(vector v) {
     return v / v.norm();
+}
+
+inline vector lerp(const vector &u, const vector &v, double t) {
+    return (1.0 - t) * u + t * v;
 }
 
 #endif

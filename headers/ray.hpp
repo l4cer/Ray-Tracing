@@ -14,7 +14,7 @@ public:
 
     Ray(const point& t_origin, const vector& t_direction) {
         m_origin = t_origin;
-        m_direction = t_direction;
+        m_direction = normalize(t_direction);
     }
 
     point getOrigin() const { return m_origin; }

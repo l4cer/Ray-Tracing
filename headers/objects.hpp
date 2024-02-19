@@ -10,39 +10,38 @@
 
 class HitInfo {
 public:
+    double root;
     point hit_point;
     vector normal;
-    double root;
-    bool front_hit;
 
     void setNormal(const Ray& ray, const vector& t_normal){
-        front_hit = dot(ray.getDirection(), t_normal) < 0;
+        bool front_hit = dot(ray.getDirection(), t_normal) < 0;
 
-        normal = front_hit ? t_normal: -t_normal;
+        normal = normalize(front_hit ? t_normal: -t_normal);
     }
 };
 
 
-class Object {
+class Hittable {
 public:
     virtual bool hit(const Ray& ray, HitInfo& info) const = 0;
 
-    ~Object() = default;
+    ~Hittable() = default;
 };
 
 
-class Sphere: public Object {
+class Sphere: public Hittable {
 private:
     point m_center;
     double m_radius;
 
 public:
-    Sphere() : Object() {
+    Sphere() : Hittable() {
         m_center = point(0.0, 0.0, 0.0);
         m_radius = 1.0;
     }
 
-    Sphere(point t_center, double t_radius) : Object() {
+    Sphere(point t_center, double t_radius) : Hittable() {
         m_center = t_center;
         m_radius = t_radius;
     }
@@ -55,42 +54,42 @@ public:
         point origin = ray.getOrigin();
         vector direction = ray.getDirection();
 
-        double a = direction.squared_norm();
-        double b = 2.0 * dot(direction, origin - m_center);
+        // Roots of x² + 2bx + c = 0
+        double b = dot(direction, origin - m_center);
         double c = (origin - m_center).squared_norm() - m_radius * m_radius;
 
-        double discriminant = b * b - 4.0 * a * c;
-        if (discriminant < 0.0) return false;
-        double sqrt_discriminant = sqrt(discriminant);
+        double delta = b * b - c;
+        if (delta < 0.0) return false;
 
-        double root = -0.5 * (sqrt_discriminant + b) / a;
+        double sqrt_delta = sqrt(delta);
+        double root = -b - sqrt_delta;
 
         if (root < 0.0) {
-            root = 0.5 * (sqrt_discriminant - b) / a;
+            root = -b + sqrt_delta;
             if (root < 0.0) return false;
         }
 
         info.root = root;
         info.hit_point = ray.at(root);
-        info.normal = (info.hit_point - m_center) / m_radius;
+        info.setNormal(ray, info.hit_point - m_center);
 
         return true;
     }
 };
 
 
-class Plane: public Object {
+class Plane: public Hittable {
 private:
     point m_point;
     vector m_normal;
 
 public:
-    Plane() : Object() {
+    Plane() : Hittable() {
         m_point = point(0.0, 0.0, 0.0);
         m_normal = vector(0.0, 0.0, 1.0);
     }
 
-    Plane(point t_point, vector t_normal) : Object() {
+    Plane(point t_point, vector t_normal) : Hittable() {
         m_point = t_point;
         m_normal = normalize(t_normal);
     }
@@ -114,35 +113,31 @@ public:
 
         info.root = root;
         info.hit_point = ray.at(root);
-        info.normal = m_normal;
+        info.setNormal(ray, m_normal);
 
         return true;
     }
 };
 
 
-using std::shared_ptr;
-using std::make_shared;
-
-
-class ObjectsList: public Object {
+class HittableList: public Hittable {
 public:
-    std::vector<shared_ptr<Object>> objects;
+    std::vector<std::shared_ptr<Hittable>> objects;
 
-    ObjectsList() {}
+    HittableList() {}
 
-    ObjectsList(shared_ptr<Object> object) { add(object); }
+    HittableList(std::shared_ptr<Hittable> object) { add(object); }
 
     void clear() { objects.clear(); }
 
-    void add(shared_ptr<Object> object) {
+    void add(std::shared_ptr<Hittable> object) {
         objects.push_back(object);
     }
 
     bool hit(const Ray& ray, HitInfo& info) const override {
         HitInfo tmp_info;
 
-        // Negative value to indicates the non-hit
+        // Negative value to indicate the non-hit
         double root = -1.0;
 
         for (const auto& object: objects) {
