@@ -60,6 +60,7 @@ public:
     }
 };
 
+using color = vector;
 using point = vector;
 
 inline std::ostream& operator<<(std::ostream &out, const vector &v) {

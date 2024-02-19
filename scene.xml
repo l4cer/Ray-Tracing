@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<scene>
+    <object geometry="sphere">
+        <center>
+            <x>0.5</x>
+            <y>0.0</y>
+            <z>-1.5</z>
+        </center>
+        <radius>0.5</radius>
+    </object>
+
+    <object geometry="sphere">
+        <center>
+            <x>-0.5</x>
+            <y>0.0</y>
+            <z>-1.5</z>
+        </center>
+        <radius>0.5</radius>
+    </object>
+
+    <object geometry="plane">
+        <point>
+            <x>0.0</x>
+            <y>-0.5</y>
+            <z>0.0</z>
+        </point>
+        <normal>
+            <x>0.0</x>
+            <y>1.0</y>
+            <z>0.0</z>
+        </normal>
+    </object>
+
+    <object geometry="plane">
+        <point>
+            <x>0.0</x>
+            <y>0.0</y>
+            <z>-3.0</z>
+        </point>
+        <normal>
+            <x>0.0</x>
+            <y>0.0</y>
+            <z>1.0</z>
+        </normal>
+    </object>
+</scene>

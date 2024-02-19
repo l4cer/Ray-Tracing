@@ -1,3 +1,6 @@
+#ifndef HANDLER_HEADER
+#define HANDLER_HEADER
+
 #include <string>
 #include <cstring>
 
@@ -49,10 +52,10 @@ public:
 
     int getCounter() const { return m_counter; }
 
-    void putPixel(vector color) {
+    void putPixel(color t_color) {
         if (m_image_file.is_open()) {
             // Adds pixel color to image file
-            m_image_file << color << "\n";
+            m_image_file << t_color << "\n";
             m_counter += 1;
 
             if (m_counter == m_width * m_height) close();
@@ -72,3 +75,5 @@ public:
         close();
     }
 };
+
+#endif
