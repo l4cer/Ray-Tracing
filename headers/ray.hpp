@@ -12,7 +12,7 @@ private:
 public:
     Ray() {}
 
-    Ray(const point& t_origin, const vector& t_direction) {
+    Ray(const point &t_origin, const vector &t_direction) {
         m_origin = t_origin;
         m_direction = normalize(t_direction);
     }

@@ -5,14 +5,14 @@
 
 
 int main() {
-    int width = 800;
-    int height = 450;
+    int width = 400;
+    int height = 225;
 
     HittableList world = construct_scene("scene.xml");
 
     ImageHandler handler = ImageHandler(width, height, "image.ppm");
 
-    Camera camera = Camera(width, height, 0.0025);
+    Camera camera = Camera(width, height, 0.005);
     camera.render(handler, world);
 
     return 0;

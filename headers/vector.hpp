@@ -17,16 +17,12 @@ public:
     double y() const { return e[1]; }
     double z() const { return e[2]; }
 
-    int r() const { return static_cast<int>(255.999 * e[0]); }
-    int g() const { return static_cast<int>(255.999 * e[1]); }
-    int b() const { return static_cast<int>(255.999 * e[2]); }
-
     vector operator-() const { return vector(-e[0], -e[1], -e[2]); }
 
     double operator[](int i) const { return e[i]; }
-    double& operator[](int i) { return e[i]; }
+    double &operator[](int i) { return e[i]; }
 
-    vector& operator+=(const vector &v) {
+    vector &operator+=(const vector &v) {
         e[0] += v.e[0];
         e[1] += v.e[1];
         e[2] += v.e[2];
@@ -34,11 +30,11 @@ public:
         return *this;
     }
 
-    vector& operator-=(const vector &v) {
+    vector &operator-=(const vector &v) {
         return *this += -v;
     }
 
-    vector& operator*=(double t) {
+    vector &operator*=(double t) {
         e[0] *= t;
         e[1] *= t;
         e[2] *= t;
@@ -46,7 +42,7 @@ public:
         return *this;
     }
 
-    vector& operator/=(double t) {
+    vector &operator/=(double t) {
         return *this *= 1.0 / t;
     }
 
@@ -60,12 +56,11 @@ public:
 };
 
 
-using color = vector;
 using point = vector;
 
 
-inline std::ostream& operator<<(std::ostream &out, const vector &v) {
-    return out << v.r() << " " << v.g() << " " << v.b();
+inline std::ostream &operator<<(std::ostream &out, const vector &v) {
+    return out << v.x() << " " << v.y() << " " << v.z();
 }
 
 inline vector operator+(const vector &u, const vector &v) {

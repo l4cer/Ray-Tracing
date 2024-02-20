@@ -4,8 +4,11 @@
 #include <memory>
 #include <vector>
 
-#include "ray.hpp"
+#include "color.hpp"
 #include "vector.hpp"
+
+#include "ray.hpp"
+#include "material.hpp"
 
 
 class HitInfo {
@@ -13,8 +16,9 @@ public:
     double root;
     point hit_point;
     vector normal;
+    Material material;
 
-    void setNormal(const Ray& ray, const vector& t_normal){
+    void setNormal(const Ray &ray, const vector &t_normal){
         bool front_hit = dot(ray.getDirection(), t_normal) < 0;
 
         normal = normalize(front_hit ? t_normal: -t_normal);
@@ -23,8 +27,19 @@ public:
 
 
 class Hittable {
+private:
+    Material m_material;
+
 public:
-    virtual bool hit(const Ray& ray, HitInfo& info) const = 0;
+    Hittable() : m_material(Material()) {}
+
+    Hittable(const Material &t_material) {
+        m_material = t_material;
+    }
+
+    Material getMaterial() const { return m_material; }
+
+    virtual bool hit(const Ray &ray, HitInfo &info) const = 0;
 
     ~Hittable() = default;
 };
@@ -41,7 +56,7 @@ public:
         m_radius = 1.0;
     }
 
-    Sphere(point t_center, double t_radius) : Hittable() {
+    Sphere(point t_center, double t_radius, const Material &t_material) : Hittable(t_material) {
         m_center = t_center;
         m_radius = t_radius;
     }
@@ -50,7 +65,7 @@ public:
 
     double getRadius() const { return m_radius; }
 
-    bool hit(const Ray& ray, HitInfo& info) const override {
+    bool hit(const Ray &ray, HitInfo &info) const override {
         point origin = ray.getOrigin();
         vector direction = ray.getDirection();
 
@@ -72,6 +87,7 @@ public:
         info.root = root;
         info.hit_point = ray.at(root);
         info.setNormal(ray, info.hit_point - m_center);
+        info.material = getMaterial();
 
         return true;
     }
@@ -89,7 +105,7 @@ public:
         m_normal = vector(0.0, 0.0, 1.0);
     }
 
-    Plane(point t_point, vector t_normal) : Hittable() {
+    Plane(point t_point, vector t_normal, const Material &t_material) : Hittable(t_material) {
         m_point = t_point;
         m_normal = normalize(t_normal);
     }
@@ -98,7 +114,7 @@ public:
 
     vector getNormal() const { return m_normal; }
 
-    bool hit(const Ray& ray, HitInfo& info) const override {
+    bool hit(const Ray &ray, HitInfo &info) const override {
         point origin = ray.getOrigin();
         vector direction = ray.getDirection();
 
@@ -114,6 +130,7 @@ public:
         info.root = root;
         info.hit_point = ray.at(root);
         info.setNormal(ray, m_normal);
+        info.material = getMaterial();
 
         return true;
     }
@@ -134,13 +151,13 @@ public:
         objects.push_back(object);
     }
 
-    bool hit(const Ray& ray, HitInfo& info) const override {
+    bool hit(const Ray &ray, HitInfo &info) const override {
         HitInfo tmp_info;
 
         // Negative value to indicate the non-hit
         double root = -1.0;
 
-        for (const auto& object: objects) {
+        for (const std::shared_ptr<Hittable> object: objects) {
             if (object->hit(ray, tmp_info)) {
                 if (root == -1.0 || tmp_info.root < root) {
                     root = tmp_info.root;

@@ -1,6 +1,9 @@
 #ifndef RENDER_HEADER
 #define RENDER_HEADER
 
+#include "color.hpp"
+#include "vector.hpp"
+
 #include "handler.hpp"
 #include "objects.hpp"
 
@@ -33,7 +36,7 @@ public:
         constructor(t_width, t_height, vector(2.0, 0.0, 0.8), 0.005);
     }
 
-    Camera(int t_width, int t_height, vector t_position) {
+    Camera(int t_width, int t_height, const vector& t_position) {
         constructor(t_width, t_height, t_position, 0.005);
     }
 
@@ -41,11 +44,11 @@ public:
         constructor(t_width, t_height, vector(2.0, 0.0, 0.8), t_viewport_ratio);
     }
 
-    Camera(int t_width, int t_height, vector t_position, double t_viewport_ratio) {
+    Camera(int t_width, int t_height, const vector& t_position, double t_viewport_ratio) {
         constructor(t_width, t_height, t_position, t_viewport_ratio);
     }
 
-    void constructor(int t_width, int t_height, vector t_position, double t_viewport_ratio) {
+    void constructor(int t_width, int t_height, const vector& t_position, double t_viewport_ratio) {
         m_width = t_width;
         m_height = t_height;
 

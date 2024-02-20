@@ -8,6 +8,14 @@
             <z>0.6</z>
         </center>
         <radius>0.6</radius>
+        <material>
+            <color>
+                <r>0.0</r>
+                <g>0.0</g>
+                <b>0.0</b>
+            </color>
+            <reflectance>0.0</reflectance>
+        </material>
     </object>
 
     <object geometry="sphere">
@@ -17,6 +25,14 @@
             <z>0.3</z>
         </center>
         <radius>0.3</radius>
+        <material>
+            <color>
+                <r>0.0</r>
+                <g>0.0</g>
+                <b>0.0</b>
+            </color>
+            <reflectance>0.0</reflectance>
+        </material>
     </object>
 
     <object geometry="plane">
@@ -30,5 +46,13 @@
             <y>0.0</y>
             <z>1.0</z>
         </normal>
+        <material>
+            <color>
+                <r>0.0</r>
+                <g>0.0</g>
+                <b>0.0</b>
+            </color>
+            <reflectance>0.0</reflectance>
+        </material>
     </object>
 </scene>
