@@ -63,7 +63,7 @@ public:
         int num_pixels = m_width * m_height;
 
         for (int i = m_counter + 1; i < num_pixels; i++)
-            m_image_file << vector() << "\n";
+            m_image_file << color() << "\n";
 
         if (m_image_file.is_open()) m_image_file.close();
     }

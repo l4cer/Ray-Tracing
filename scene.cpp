@@ -1,9 +1,3 @@
-#include <string>
-#include <vector>
-
-#include <fstream>
-
-#include "headers/objects.hpp"
 #include "rapidxml/rapidxml.hpp"
 
 
@@ -50,11 +44,28 @@ HittableList construct_scene(std::string filename_xml) {
         std::string geometry = node->first_attribute("geometry")->value();
 
         rapidxml::xml_node<> * material_node = node->first_node("material");
+        std::string appearance = material_node->first_attribute("appearance")->value();
 
-        Material material = Material(
-            get_color(material_node->first_node("color")),
-            std::stod(material_node->first_node("reflectance")->value())
-        );
+        std::shared_ptr<Material> material;
+
+        if (appearance == "light_source") {
+            material = std::make_shared<LightSource>(
+                get_color(material_node->first_node("albedo"))
+            );
+        }
+
+        if (appearance == "lambertian") {
+            material = std::make_shared<Lambertian>(
+                get_color(material_node->first_node("albedo"))
+            );
+        }
+
+        if (appearance == "metal") {
+            material = std::make_shared<Metal>(
+                get_color(material_node->first_node("albedo")),
+                std::stod(material_node->first_node("fuzzy")->value())
+            );
+        }
 
         if (geometry == "sphere") {
             world.add(std::make_shared<Sphere>(

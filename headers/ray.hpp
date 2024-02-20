@@ -1,8 +1,6 @@
 #ifndef RAY_HEADER
 #define RAY_HEADER
 
-#include "vector.hpp"
-
 
 class Ray {
 private:
@@ -24,6 +22,8 @@ public:
     point at(double t) const {
         return m_origin + t * m_direction;
     }
+
+    ~Ray() = default;
 };
 
 #endif

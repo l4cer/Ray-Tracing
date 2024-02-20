@@ -22,6 +22,8 @@ public:
     int r() const { return clamp(static_cast<int>(255.999 * e[0])); }
     int g() const { return clamp(static_cast<int>(255.999 * e[1])); }
     int b() const { return clamp(static_cast<int>(255.999 * e[2])); }
+
+    ~color() = default;
 };
 
 

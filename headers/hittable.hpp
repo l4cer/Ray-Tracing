@@ -1,14 +1,13 @@
-#ifndef OBJECTS_HEADER
-#define OBJECTS_HEADER
+#ifndef HITTABLE_HEADER
+#define HITTABLE_HEADER
 
 #include <memory>
 #include <vector>
 
-#include "color.hpp"
-#include "vector.hpp"
-
 #include "ray.hpp"
-#include "material.hpp"
+
+
+class Material;
 
 
 class HitInfo {
@@ -16,28 +15,30 @@ public:
     double root;
     point hit_point;
     vector normal;
-    Material material;
+    std::shared_ptr<Material> material;
 
     void setNormal(const Ray &ray, const vector &t_normal){
         bool front_hit = dot(ray.getDirection(), t_normal) < 0;
 
         normal = normalize(front_hit ? t_normal: -t_normal);
     }
+
+    ~HitInfo() = default;
 };
 
 
 class Hittable {
 private:
-    Material m_material;
+    std::shared_ptr<Material> m_material;
 
 public:
-    Hittable() : m_material(Material()) {}
+    Hittable() : m_material(std::shared_ptr<Material>()) {}
 
-    Hittable(const Material &t_material) {
+    Hittable(std::shared_ptr<Material> t_material) {
         m_material = t_material;
     }
 
-    Material getMaterial() const { return m_material; }
+    std::shared_ptr<Material> getMaterial() const { return m_material; }
 
     virtual bool hit(const Ray &ray, HitInfo &info) const = 0;
 
@@ -56,7 +57,7 @@ public:
         m_radius = 1.0;
     }
 
-    Sphere(point t_center, double t_radius, const Material &t_material) : Hittable(t_material) {
+    Sphere(point t_center, double t_radius, std::shared_ptr<Material> t_material) : Hittable(t_material) {
         m_center = t_center;
         m_radius = t_radius;
     }
@@ -79,9 +80,9 @@ public:
         double sqrt_delta = sqrt(delta);
         double root = -b - sqrt_delta;
 
-        if (root < 0.0) {
+        if (root < 0.001) {
             root = -b + sqrt_delta;
-            if (root < 0.0) return false;
+            if (root < 0.001) return false;
         }
 
         info.root = root;
@@ -105,7 +106,7 @@ public:
         m_normal = vector(0.0, 0.0, 1.0);
     }
 
-    Plane(point t_point, vector t_normal, const Material &t_material) : Hittable(t_material) {
+    Plane(point t_point, vector t_normal, std::shared_ptr<Material> t_material) : Hittable(t_material) {
         m_point = t_point;
         m_normal = normalize(t_normal);
     }
@@ -125,7 +126,7 @@ public:
         double num = dot(m_point - origin, m_normal);
         double root = num / den;
 
-        if (root < 0.0) return false;
+        if (root < 0.001) return false;
 
         info.root = root;
         info.hit_point = ray.at(root);

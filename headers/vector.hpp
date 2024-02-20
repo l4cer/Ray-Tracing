@@ -2,7 +2,6 @@
 #define VECTOR_HEADER
 
 #include <cmath>
-#include <iostream>
 
 
 class vector {
@@ -53,6 +52,14 @@ public:
     double norm() const {
         return std::sqrt(squared_norm());
     }
+
+    bool near_zero() const {
+        double threshold = 1e-8;
+
+        return e[0] <= threshold && e[1] <= threshold && e[2] <= threshold;
+    }
+
+    ~vector() = default;
 };
 
 
