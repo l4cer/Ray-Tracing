@@ -1,16 +1,8 @@
-#include <string>
-#include <vector>
-
-#include <fstream>
-
-#include "headers/vector.hpp"
-#include "headers/objects.hpp"
-
 #include "rapidxml/rapidxml.hpp"
 
 
-point get_point(rapidxml::xml_node<> * node) {
-    return point(
+vector get_vector(rapidxml::xml_node<> * node) {
+    return vector(
         std::stod(node->first_node("x")->value()),
         std::stod(node->first_node("y")->value()),
         std::stod(node->first_node("z")->value())
@@ -18,9 +10,18 @@ point get_point(rapidxml::xml_node<> * node) {
 }
 
 
-// Just an alias for the function get_point
-vector get_vector(rapidxml::xml_node<> * node) {
-    return get_point(node);
+// Just an alias for the function get_vector
+point get_point(rapidxml::xml_node<> * node) {
+    return get_vector(node);
+}
+
+
+color get_color(rapidxml::xml_node<> * node) {
+    return color(
+        std::stod(node->first_node("r")->value()),
+        std::stod(node->first_node("g")->value()),
+        std::stod(node->first_node("b")->value())
+    );
 }
 
 
@@ -42,17 +43,43 @@ HittableList construct_scene(std::string filename_xml) {
     for (node = root->first_node("object"); node; node = node->next_sibling()) {
         std::string geometry = node->first_attribute("geometry")->value();
 
+        rapidxml::xml_node<> * material_node = node->first_node("material");
+        std::string appearance = material_node->first_attribute("appearance")->value();
+
+        std::shared_ptr<Material> material;
+
+        if (appearance == "light_source") {
+            material = std::make_shared<LightSource>(
+                get_color(material_node->first_node("albedo"))
+            );
+        }
+
+        if (appearance == "lambertian") {
+            material = std::make_shared<Lambertian>(
+                get_color(material_node->first_node("albedo"))
+            );
+        }
+
+        if (appearance == "metal") {
+            material = std::make_shared<Metal>(
+                get_color(material_node->first_node("albedo")),
+                std::stod(material_node->first_node("fuzzy")->value())
+            );
+        }
+
         if (geometry == "sphere") {
             world.add(std::make_shared<Sphere>(
                 get_point(node->first_node("center")),
-                std::stod(node->first_node("radius")->value())
+                std::stod(node->first_node("radius")->value()),
+                material
             ));
         }
 
         if (geometry == "plane") {
             world.add(std::make_shared<Plane>(
                 get_point(node->first_node("point")),
-                get_vector(node->first_node("normal"))
+                get_vector(node->first_node("normal")),
+                material
             ));
         }
     }

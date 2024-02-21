@@ -1,10 +1,10 @@
 #ifndef RENDER_HEADER
 #define RENDER_HEADER
 
-#include "handler.hpp"
-#include "objects.hpp"
-
 #include "utils.hpp"
+
+#include "hittable.hpp"
+#include "material.hpp"
 
 
 class Camera {
@@ -24,6 +24,9 @@ private:
     // Anti-aliasing sampling
     int aa_sampling = 20;
 
+    // Recursive ray scattering
+    int max_depth = 10;
+
 public:
     Camera() {
         constructor(400, 225, vector(2.0, 0.0, 0.8), 0.005);
@@ -33,7 +36,7 @@ public:
         constructor(t_width, t_height, vector(2.0, 0.0, 0.8), 0.005);
     }
 
-    Camera(int t_width, int t_height, vector t_position) {
+    Camera(int t_width, int t_height, const vector& t_position) {
         constructor(t_width, t_height, t_position, 0.005);
     }
 
@@ -41,11 +44,11 @@ public:
         constructor(t_width, t_height, vector(2.0, 0.0, 0.8), t_viewport_ratio);
     }
 
-    Camera(int t_width, int t_height, vector t_position, double t_viewport_ratio) {
+    Camera(int t_width, int t_height, const vector& t_position, double t_viewport_ratio) {
         constructor(t_width, t_height, t_position, t_viewport_ratio);
     }
 
-    void constructor(int t_width, int t_height, vector t_position, double t_viewport_ratio) {
+    void constructor(int t_width, int t_height, const vector& t_position, double t_viewport_ratio) {
         m_width = t_width;
         m_height = t_height;
 
@@ -62,20 +65,31 @@ public:
         m_viewport_anchor -= 0.5 * (m_viewport_u + m_viewport_v);
     }
 
-    color ray_color(const Ray& ray, const HittableList& world){
+    color ray_color(const Ray& ray, const HittableList& world, int depth){
         HitInfo info;
 
-        if (world.hit(ray, info)) {
-            return 0.5 * (info.normal + color(1.0, 1.0, 1.0));
-        } else {
-            vector direction = normalize(ray.getDirection());
+        if (depth < 0) return color(0.0, 0.0, 0.0);
 
-            double y = 0.5 * (direction.y() + 1.0);
-            return lerp(color(1.0, 1.0, 1.0), color(0.5, 0.7, 1.0), y);
+        if (world.hit(ray, info)) {
+            Ray scattered;
+            color attenuation;
+
+            // Recursive ray scattering
+            if (info.material->scatter(ray, info, attenuation, scattered))
+                return attenuation * ray_color(scattered, world, depth-1);
+
+            return attenuation;
+
         }
+
+        return color(0.0, 0.0, 0.0);
+        double z = normalize(ray.getDirection()).y();
+
+        return lerp(
+            color(1.0, 1.0, 1.0), color(0.5, 0.7, 1.0), 0.5 * (1.0 + z));
     }
 
-    void render(ImageHandler& handler, const HittableList& world){
+    void render(ImageHandler& handler, const HittableList& world) {
         for (int j = 0; j < m_height; j++) {
             for (int i = 0; i < m_width; i++) {
                 color pixel_color = color(0.0, 0.0, 0.0);
@@ -84,17 +98,26 @@ public:
                 for (int sample = 0; sample < aa_sampling; sample++) {
                     vector pixel_pos = m_viewport_anchor;
 
-                    pixel_pos += (i + random_number() - 0.5) * m_delta_u;
-                    pixel_pos += (j + random_number() - 0.5) * m_delta_v;
+                    pixel_pos += (i + random_double() - 0.5) * m_delta_u;
+                    pixel_pos += (j + random_double() - 0.5) * m_delta_v;
 
                     Ray ray = Ray(pixel_pos, pixel_pos - m_position);
-                    pixel_color += ray_color(ray, world);
+                    pixel_color += ray_color(ray, world, max_depth);
                 }
 
-                handler.putPixel(pixel_color / aa_sampling);
+                handler.putPixel(
+                    color(
+                        // Gamma correction and anti-aliasing sampling
+                        std::sqrt(pixel_color[0] / aa_sampling),
+                        std::sqrt(pixel_color[1] / aa_sampling),
+                        std::sqrt(pixel_color[2] / aa_sampling)
+                    )
+                );
             }
         }
     }
+
+    ~Camera() = default;
 };
 
 #endif

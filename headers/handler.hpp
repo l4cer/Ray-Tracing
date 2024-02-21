@@ -2,12 +2,9 @@
 #define HANDLER_HEADER
 
 #include <string>
-#include <cstring>
-
 #include <fstream>
-#include <iostream>
 
-#include "vector.hpp"
+#include "color.hpp"
 
 
 class ImageHandler {
@@ -39,7 +36,7 @@ public:
         m_counter = 0;
     }
 
-    ImageHandler(const ImageHandler& t_handler) {
+    ImageHandler(const ImageHandler &t_handler) {
         m_width = t_handler.getWidth();
         m_height = t_handler.getHeight();
 
@@ -66,7 +63,7 @@ public:
         int num_pixels = m_width * m_height;
 
         for (int i = m_counter + 1; i < num_pixels; i++)
-            m_image_file << vector() << "\n";
+            m_image_file << color() << "\n";
 
         if (m_image_file.is_open()) m_image_file.close();
     }
