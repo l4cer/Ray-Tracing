@@ -1,5 +1,5 @@
-#ifndef UTILS_HEADER
-#define UTILS_HEADER
+#ifndef UTILS_H
+#define UTILS_H
 
 #include <limits>
 #include <random>

@@ -1,5 +1,5 @@
-#ifndef HANDLER_HEADER
-#define HANDLER_HEADER
+#ifndef HANDLER_H
+#define HANDLER_H
 
 #include <string>
 #include <fstream>

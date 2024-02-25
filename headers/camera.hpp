@@ -1,5 +1,5 @@
-#ifndef RENDER_HEADER
-#define RENDER_HEADER
+#ifndef CAMERA_H
+#define CAMERA_H
 
 #include "utils.hpp"
 
@@ -36,7 +36,7 @@ public:
         constructor(t_width, t_height, vector(2.0, 0.0, 0.8), 0.005);
     }
 
-    Camera(int t_width, int t_height, const vector& t_position) {
+    Camera(int t_width, int t_height, const vector &t_position) {
         constructor(t_width, t_height, t_position, 0.005);
     }
 
@@ -44,11 +44,11 @@ public:
         constructor(t_width, t_height, vector(2.0, 0.0, 0.8), t_viewport_ratio);
     }
 
-    Camera(int t_width, int t_height, const vector& t_position, double t_viewport_ratio) {
+    Camera(int t_width, int t_height, const vector &t_position, double t_viewport_ratio) {
         constructor(t_width, t_height, t_position, t_viewport_ratio);
     }
 
-    void constructor(int t_width, int t_height, const vector& t_position, double t_viewport_ratio) {
+    void constructor(int t_width, int t_height, const vector &t_position, double t_viewport_ratio) {
         m_width = t_width;
         m_height = t_height;
 
@@ -65,7 +65,7 @@ public:
         m_viewport_anchor -= 0.5 * (m_viewport_u + m_viewport_v);
     }
 
-    color ray_color(const Ray& ray, const HittableList& world, int depth){
+    color ray_color(const Ray& ray, const HittableList& world, int depth) {
         HitInfo info;
 
         if (depth < 0) return color(0.0, 0.0, 0.0);
@@ -79,17 +79,16 @@ public:
                 return attenuation * ray_color(scattered, world, depth-1);
 
             return attenuation;
-
         }
 
         return color(0.0, 0.0, 0.0);
-        double z = normalize(ray.getDirection()).y();
+        double z = ray.getDirection().z();
 
         return lerp(
             color(1.0, 1.0, 1.0), color(0.5, 0.7, 1.0), 0.5 * (1.0 + z));
     }
 
-    void render(ImageHandler& handler, const HittableList& world) {
+    void render(ImageHandler &handler, const HittableList &world) {
         for (int j = 0; j < m_height; j++) {
             for (int i = 0; i < m_width; i++) {
                 color pixel_color = color(0.0, 0.0, 0.0);

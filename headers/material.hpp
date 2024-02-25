@@ -1,5 +1,5 @@
-#ifndef MEATERIAL_HEADER
-#define MEATERIAL_HEADER
+#ifndef MEATERIAL_H
+#define MEATERIAL_H
 
 
 class HitInfo;
@@ -35,6 +35,8 @@ public:
 
         return false;
     }
+
+    ~LightSource() = default;
 };
 
 
@@ -51,6 +53,8 @@ public:
 
         return true;
     }
+
+    ~Lambertian() = default;
 };
 
 
@@ -77,6 +81,8 @@ public:
 
         return true;
     }
+
+    ~Metal() = default;
 };
 
 #endif

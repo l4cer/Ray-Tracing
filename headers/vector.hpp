@@ -1,5 +1,5 @@
-#ifndef VECTOR_HEADER
-#define VECTOR_HEADER
+#ifndef VECTOR_H
+#define VECTOR_H
 
 #include <cmath>
 
@@ -16,10 +16,11 @@ public:
     double y() const { return e[1]; }
     double z() const { return e[2]; }
 
-    vector operator-() const { return vector(-e[0], -e[1], -e[2]); }
-
     double operator[](int i) const { return e[i]; }
+
     double &operator[](int i) { return e[i]; }
+
+    vector operator-() const { return vector(-e[0], -e[1], -e[2]); }
 
     vector &operator+=(const vector &v) {
         e[0] += v.e[0];

@@ -1,5 +1,5 @@
-#ifndef HITTABLE_HEADER
-#define HITTABLE_HEADER
+#ifndef HITTABLE_H
+#define HITTABLE_H
 
 #include <memory>
 #include <vector>
@@ -10,20 +10,11 @@
 class Material;
 
 
-class HitInfo {
-public:
+struct HitInfo {
     double root;
     point hit_point;
     vector normal;
     std::shared_ptr<Material> material;
-
-    void setNormal(const Ray &ray, const vector &t_normal){
-        bool front_hit = dot(ray.getDirection(), t_normal) < 0;
-
-        normal = normalize(front_hit ? t_normal: -t_normal);
-    }
-
-    ~HitInfo() = default;
 };
 
 
@@ -87,11 +78,13 @@ public:
 
         info.root = root;
         info.hit_point = ray.at(root);
-        info.setNormal(ray, info.hit_point - m_center);
+        info.normal = normalize(info.hit_point - m_center);
         info.material = getMaterial();
 
         return true;
     }
+
+    ~Sphere() = default;
 };
 
 
@@ -130,26 +123,31 @@ public:
 
         info.root = root;
         info.hit_point = ray.at(root);
-        info.setNormal(ray, m_normal);
+        info.normal = m_normal;
         info.material = getMaterial();
 
         return true;
     }
+
+    ~Plane() = default;
 };
 
 
 class HittableList: public Hittable {
-public:
-    std::vector<std::shared_ptr<Hittable>> objects;
+private:
+    std::vector<std::shared_ptr<Hittable>> m_objects;
 
+public:
     HittableList() {}
 
-    HittableList(std::shared_ptr<Hittable> object) { add(object); }
+    HittableList(std::shared_ptr<Hittable> t_object) { add(t_object); }
 
-    void clear() { objects.clear(); }
+    std::vector<std::shared_ptr<Hittable>> getObjects() const { return m_objects; }
 
-    void add(std::shared_ptr<Hittable> object) {
-        objects.push_back(object);
+    void clear() { m_objects.clear(); }
+
+    void add(std::shared_ptr<Hittable> t_object) {
+        m_objects.push_back(t_object);
     }
 
     bool hit(const Ray &ray, HitInfo &info) const override {
@@ -158,7 +156,7 @@ public:
         // Negative value to indicate the non-hit
         double root = -1.0;
 
-        for (const std::shared_ptr<Hittable> object: objects) {
+        for (const std::shared_ptr<Hittable> object: m_objects) {
             if (object->hit(ray, tmp_info)) {
                 if (root == -1.0 || tmp_info.root < root) {
                     root = tmp_info.root;
@@ -169,6 +167,8 @@ public:
 
         return root != -1.0;
     }
+
+    ~HittableList() = default;
 };
 
 #endif

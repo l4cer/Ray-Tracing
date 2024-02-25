@@ -1,5 +1,5 @@
 #include "headers/handler.hpp"
-#include "headers/render.hpp"
+#include "headers/camera.hpp"
 
 #include "scene.cpp"
 

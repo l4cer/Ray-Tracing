@@ -1,5 +1,5 @@
-#ifndef COLOR_HEADER
-#define COLOR_HEADER
+#ifndef COLOR_H
+#define COLOR_H
 
 #include <iostream>
 
@@ -19,9 +19,9 @@ public:
 
     color(const vector &v) : vector(v.e[0], v.e[1], v.e[2]) {}
 
-    int r() const { return clamp(static_cast<int>(255.999 * e[0])); }
-    int g() const { return clamp(static_cast<int>(255.999 * e[1])); }
-    int b() const { return clamp(static_cast<int>(255.999 * e[2])); }
+    int r() const { return clamp(static_cast<int>(255 * e[0])); }
+    int g() const { return clamp(static_cast<int>(255 * e[1])); }
+    int b() const { return clamp(static_cast<int>(255 * e[2])); }
 
     ~color() = default;
 };

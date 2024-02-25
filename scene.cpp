@@ -41,8 +41,6 @@ HittableList construct_scene(std::string filename_xml) {
 
     root = doc.first_node("scene");
     for (node = root->first_node("object"); node; node = node->next_sibling()) {
-        std::string geometry = node->first_attribute("geometry")->value();
-
         rapidxml::xml_node<> * material_node = node->first_node("material");
         std::string appearance = material_node->first_attribute("appearance")->value();
 
@@ -66,6 +64,8 @@ HittableList construct_scene(std::string filename_xml) {
                 std::stod(material_node->first_node("fuzzy")->value())
             );
         }
+
+        std::string geometry = node->first_attribute("geometry")->value();
 
         if (geometry == "sphere") {
             world.add(std::make_shared<Sphere>(
