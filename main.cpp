@@ -1,7 +1,7 @@
 #include "headers/handler.hpp"
 #include "headers/camera.hpp"
 
-#include "scene.cpp"
+#include "source/scene.cpp"
 
 
 int main() {
