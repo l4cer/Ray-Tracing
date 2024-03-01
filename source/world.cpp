@@ -25,7 +25,54 @@ color get_color(rapidxml::xml_node<> * node) {
 }
 
 
-HittableList construct_scene(std::string filename_xml) {
+std::shared_ptr<Texture> get_texture(rapidxml::xml_node<> * node) {
+    std::string texture = node->first_attribute("texture")->value();
+
+    if (texture == "solid") {
+        return std::make_shared<SolidTexture>(
+            get_color(node->first_node("albedo"))
+        );
+    }
+
+    if (texture == "checker") {
+        return std::make_shared<CheckerTexture>(
+            get_color(node->first_node("odd")),
+            get_color(node->first_node("even"))
+        );
+    }
+
+    if (texture == "image") {
+        return std::make_shared<ImageTexture>(
+            node->first_node("filename")->value()
+        );
+    }
+
+    return std::make_shared<SolidTexture>();
+}
+
+
+std::shared_ptr<Material> get_material(rapidxml::xml_node<> * node) {
+    std::string appearance = node->first_attribute("appearance")->value();
+
+    std::shared_ptr<Texture> texture = get_texture(node);
+
+    if (appearance == "light")
+        return std::make_shared<LightSource>(texture);
+
+    if (appearance == "lambertian")
+        return std::make_shared<Lambertian>(texture);
+
+    if (appearance == "metal") {
+        return std::make_shared<Metal>(
+            texture, std::stod(node->first_node("fuzzy")->value())
+        );
+    }
+
+    return std::make_shared<Lambertian>();
+}
+
+
+HittableList construct_world(std::string filename_xml) {
     HittableList world;
 
     rapidxml::xml_document<> doc;
@@ -41,31 +88,9 @@ HittableList construct_scene(std::string filename_xml) {
 
     root = doc.first_node("scene");
     for (node = root->first_node("object"); node; node = node->next_sibling()) {
-        rapidxml::xml_node<> * material_node = node->first_node("material");
-        std::string appearance = material_node->first_attribute("appearance")->value();
-
-        std::shared_ptr<Material> material;
-
-        if (appearance == "light_source") {
-            material = std::make_shared<LightSource>(
-                get_color(material_node->first_node("albedo"))
-            );
-        }
-
-        if (appearance == "lambertian") {
-            material = std::make_shared<Lambertian>(
-                get_color(material_node->first_node("albedo"))
-            );
-        }
-
-        if (appearance == "metal") {
-            material = std::make_shared<Metal>(
-                get_color(material_node->first_node("albedo")),
-                std::stod(material_node->first_node("fuzzy")->value())
-            );
-        }
-
         std::string geometry = node->first_attribute("geometry")->value();
+
+        std::shared_ptr<Material> material = get_material(node->first_node("material"));
 
         if (geometry == "sphere") {
             world.add(std::make_shared<Sphere>(

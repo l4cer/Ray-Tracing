@@ -6,8 +6,8 @@
 #include "vector.hpp"
 
 
-int clamp(int value) {
-    return (value < 0) ? 0 : ((value > 255) ? 255 : value);
+double clamp(double value) {
+    return (value < 0.0) ? 0.0 : ((value > 1.0) ? 1.0 : value);
 }
 
 
@@ -19,9 +19,9 @@ public:
 
     color(const vector &v) : vector(v.e[0], v.e[1], v.e[2]) {}
 
-    int r() const { return clamp(static_cast<int>(255 * e[0])); }
-    int g() const { return clamp(static_cast<int>(255 * e[1])); }
-    int b() const { return clamp(static_cast<int>(255 * e[2])); }
+    int r() const { return static_cast<int>(255 * clamp(e[0])); }
+    int g() const { return static_cast<int>(255 * clamp(e[1])); }
+    int b() const { return static_cast<int>(255 * clamp(e[2])); }
 
     ~color() = default;
 };

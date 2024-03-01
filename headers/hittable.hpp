@@ -15,6 +15,8 @@ struct HitInfo {
     point hit_point;
     vector normal;
     std::shared_ptr<Material> material;
+    double texture_u;
+    double texture_v;
 };
 
 
@@ -81,6 +83,9 @@ public:
         info.normal = normalize(info.hit_point - m_center);
         info.material = getMaterial();
 
+        info.texture_u = atan2(info.normal.y(), info.normal.x()) / tau + 0.5;
+        info.texture_v = acos(info.normal.z()) / pi;
+
         return true;
     }
 
@@ -125,6 +130,10 @@ public:
         info.hit_point = ray.at(root);
         info.normal = m_normal;
         info.material = getMaterial();
+
+        double tmp;   // Discard the integer part
+        info.texture_u = std::modf(0.25 * info.hit_point.x(), &tmp);
+        info.texture_v = std::modf(0.25 * info.hit_point.y(), &tmp);
 
         return true;
     }

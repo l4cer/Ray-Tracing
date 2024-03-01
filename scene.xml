@@ -3,12 +3,12 @@
 <scene>
     <object geometry="sphere">
         <center>
-            <x>0.0</x>
+            <x>200.0</x>
             <y>0.0</y>
             <z>200.0</z>
         </center>
         <radius>100</radius>
-        <material appearance="light_source">
+        <material appearance="light" texture="solid">
             <albedo>
                 <r>1.0</r>
                 <g>1.0</g>
@@ -24,12 +24,8 @@
             <z>0.6</z>
         </center>
         <radius>0.6</radius>
-        <material appearance="lambertian">
-            <albedo>
-                <r>0.5</r>
-                <g>0.1</g>
-                <b>0.5</b>
-            </albedo>
+        <material appearance="lambertian" texture="image">
+            <filename>textures/earth.png</filename>
         </material>
     </object>
 
@@ -40,13 +36,8 @@
             <z>0.3</z>
         </center>
         <radius>0.3</radius>
-        <material appearance="metal">
-            <albedo>
-                <r>0.5</r>
-                <g>0.5</g>
-                <b>0.5</b>
-            </albedo>
-            <fuzzy>0.2</fuzzy>
+        <material appearance="lambertian" texture="image">
+            <filename>textures/moon.png</filename>
         </material>
     </object>
 
@@ -61,11 +52,11 @@
             <y>0.0</y>
             <z>1.0</z>
         </normal>
-        <material appearance="lambertian">
+        <material appearance="lambertian" texture="solid">
             <albedo>
-                <r>0.0</r>
-                <g>0.5</g>
-                <b>0.0</b>
+                <r>0.8</r>
+                <g>0.8</g>
+                <b>0.8</b>
             </albedo>
         </material>
     </object>

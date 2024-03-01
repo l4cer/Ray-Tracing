@@ -100,7 +100,7 @@ inline vector operator*(const vector &v, double t) {
     return t * v;
 }
 
-inline vector operator/(vector v, double t) {
+inline vector operator/(const vector &v, double t) {
     return (1.0 / t) * v;
 }
 
@@ -118,7 +118,7 @@ inline vector cross(const vector &u, const vector &v) {
         u.e[0] * v.e[1] - u.e[1] * v.e[0]);
 }
 
-inline vector normalize(vector v) {
+inline vector normalize(const vector &v) {
     return v / v.norm();
 }
 

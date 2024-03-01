@@ -1,22 +1,21 @@
 #ifndef MEATERIAL_H
 #define MEATERIAL_H
 
-
-class HitInfo;
+#include "texture.hpp"
 
 
 class Material {
 private:
-    color m_albedo;
+    std::shared_ptr<Texture> m_texture;
 
 public:
-    Material() : m_albedo(color(0.5, 0.5, 0.5)) {}
+    Material() : m_texture(std::shared_ptr<SolidTexture>()) {}
 
-    Material(const color &t_albedo) {
-        m_albedo = t_albedo;
+    Material(std::shared_ptr<Texture> t_texture) {
+        m_texture = t_texture;
     }
 
-    color getAlbedo() const { return m_albedo; }
+    std::shared_ptr<Texture> getTexture() const { return m_texture; }
 
     virtual bool scatter(const Ray &ray, HitInfo &info, color &attenuation, Ray &scattered) const = 0;
 
@@ -28,10 +27,11 @@ class LightSource: public Material {
 public:
     LightSource() : Material() {}
 
-    LightSource(const color &t_albedo) : Material(t_albedo) {}
+    LightSource(std::shared_ptr<Texture> t_texture) : Material(t_texture) {}
 
     bool scatter(const Ray &ray, HitInfo &info, color &attenuation, Ray &scattered) const override {
-        attenuation = getAlbedo();
+        attenuation = getTexture()->getColorInTexture(
+            info.texture_u, info.texture_v, info.hit_point);
 
         return false;
     }
@@ -44,12 +44,13 @@ class Lambertian: public Material {
 public:
     Lambertian() : Material() {}
 
-    Lambertian(const color &t_albedo) : Material(t_albedo) {}
+    Lambertian(std::shared_ptr<Texture> t_texture) : Material(t_texture) {}
 
     bool scatter(const Ray &ray, HitInfo &info, color &attenuation, Ray &scattered) const override {
         scattered = Ray(
             info.hit_point, info.normal + random_unit_vector());
-        attenuation = getAlbedo();
+        attenuation = getTexture()->getColorInTexture(
+            info.texture_u, info.texture_v, info.hit_point);
 
         return true;
     }
@@ -63,9 +64,11 @@ private:
     double m_fuzzy;
 
 public:
-    Metal() : Material(), m_fuzzy(0.3) {}
+    Metal() : Material() {
+        m_fuzzy = 0.2;
+    }
 
-    Metal(const color &t_albedo, double t_fuzzy) : Material(t_albedo) {
+    Metal(std::shared_ptr<Texture> t_texture, double t_fuzzy) : Material(t_texture) {
         m_fuzzy = t_fuzzy;
     }
 
@@ -77,7 +80,8 @@ public:
 
         scattered = Ray(
             info.hit_point, reflected + m_fuzzy * random_unit_vector());
-        attenuation = getAlbedo();
+        attenuation = getTexture()->getColorInTexture(
+            info.texture_u, info.texture_v, info.hit_point);
 
         return true;
     }
