@@ -14,39 +14,36 @@
 
 class Image {
 private:
-    const int m_bytes_per_pixel = 3;
     unsigned char * m_data;
     int m_width, m_height;
-    int m_bytes_per_scanline;
 
 public:
     Image() : m_data(nullptr) {}
 
     Image(std::string t_filename) {
-        int dummy = m_bytes_per_pixel;
+        int dummy = 3;
 
         m_data = stbi_load(
-            t_filename.c_str(), &m_width, &m_height, &dummy, m_bytes_per_pixel);
-
-        m_bytes_per_scanline = m_width * m_bytes_per_pixel;
+            t_filename.c_str(), &m_width, &m_height, &dummy, 3);
 
         if (m_data == nullptr)
             std::cerr << "ERROR: Could not load image file '" << t_filename << "'.\n";
     }
+
+    unsigned char * getData() const { return m_data; }
 
     int getWidth() const { return (m_data == nullptr) ? 0 : m_width; }
 
     int getHeight() const { return (m_data == nullptr) ? 0 : m_height; }
 
     const unsigned char * pixelData(int x, int y) const {
-        // Return the address of the three bytes of the pixel at x,y (or magenta if no data).
         static unsigned char magenta[] = { 255, 0, 255 };
         if (m_data == nullptr) return magenta;
 
         x = (x < 0) ? 0 : ((x < m_width) ? x : m_width - 1);
         y = (y < 0) ? 0 : ((y < m_height) ? y : m_height - 1);
 
-        return m_data + x * m_bytes_per_pixel + y * m_bytes_per_scanline;
+        return m_data + 3 * (x + y * m_width);
     }
 
     ~Image() { STBI_FREE(m_data); }

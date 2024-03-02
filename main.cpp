@@ -10,7 +10,7 @@ int main() {
 
     HittableList world = construct_world("scene.xml");
 
-    ImageHandler handler = ImageHandler(width, height, "image.ppm");
+    ImageHandler handler = ImageHandler(width, height, "image.png");
 
     Camera camera = Camera(width, height, 0.004);
     camera.render(handler, world);
