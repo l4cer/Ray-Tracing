@@ -33,7 +33,7 @@ public:
     }
 
     Camera(int t_width, int t_height) {
-        constructor(t_width, t_height, vector(2.0, 0.0, 0.5), 0.004);
+        constructor(t_width, t_height, vector(2.0, 0.0, 0.5), 1.6 / t_width);
     }
 
     Camera(int t_width, int t_height, double t_viewport_ratio) {

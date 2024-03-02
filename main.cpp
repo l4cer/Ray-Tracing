@@ -12,7 +12,7 @@ int main() {
 
     ImageHandler handler = ImageHandler(width, height, "image.png");
 
-    Camera camera = Camera(width, height, 0.004);
+    Camera camera = Camera(width, height);
     camera.render(handler, world);
 
     return 0;
