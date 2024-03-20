@@ -68,6 +68,12 @@ std::shared_ptr<Material> get_material(rapidxml::xml_node<> * node) {
         );
     }
 
+    if (appearance == "dielectric") {
+        return std::make_shared<Dielectric>(
+            texture, std::stod(node->first_node("refractive_index")->value())
+        );
+    }
+
     return std::make_shared<Lambertian>();
 }
 
