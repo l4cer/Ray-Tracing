@@ -62,22 +62,24 @@ public:
     }
 
     color rayColor(const Ray &ray, const HittableList &world, int depth) {
+        if (depth <= 0)
+            return color(0.0, 0.0, 0.0);
+
         HitInfo info;
 
-        if (depth < 0) return color(0.0, 0.0, 0.0);
+        if (!world.hit(ray, info))
+            return color(0.0, 0.0, 0.0);
 
-        if (world.hit(ray, info)) {
-            Ray scattered;
-            color attenuation;
+        color emitted = info.material->emitted(info);
 
-            // Recursive ray scattering
-            if (info.material->scatter(ray, info, attenuation, scattered))
-                return attenuation * rayColor(scattered, world, depth-1);
+        Ray scattered;
+        color attenuation;
 
-            return attenuation;
-        }
+        // Recursive ray scattering
+        if (info.material->scatter(ray, info, attenuation, scattered))
+            return emitted + attenuation * rayColor(scattered, world, depth-1);
 
-        return color(0.0, 0.0, 0.0);
+        return emitted;
     }
 
     void render(ImageHandler &handler, const HittableList &world) {

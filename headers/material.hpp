@@ -17,6 +17,8 @@ public:
 
     std::shared_ptr<Texture> getTexture() const { return m_texture; }
 
+    virtual color emitted(HitInfo &info) const { return color(0.0, 0.0, 0.0); };
+
     virtual bool scatter(const Ray &ray, HitInfo &info, color &attenuation, Ray &scattered) const = 0;
 
     ~Material() = default;
@@ -29,10 +31,12 @@ public:
 
     LightSource(std::shared_ptr<Texture> t_texture) : Material(t_texture) {}
 
-    bool scatter(const Ray &ray, HitInfo &info, color &attenuation, Ray &scattered) const override {
-        attenuation = getTexture()->getColorInTexture(
+    color emitted(HitInfo &info) const override {
+        return getTexture()->getColorInTexture(
             info.texture_u, info.texture_v, info.hit_point);
+    }
 
+    bool scatter(const Ray &ray, HitInfo &info, color &attenuation, Ray &scattered) const override {
         return false;
     }
 
@@ -47,8 +51,13 @@ public:
     Lambertian(std::shared_ptr<Texture> t_texture) : Material(t_texture) {}
 
     bool scatter(const Ray &ray, HitInfo &info, color &attenuation, Ray &scattered) const override {
-        scattered = Ray(
-            info.hit_point, info.normal + random_unit_vector());
+        vector direction = info.normal + random_unit_vector();
+
+        // Catch degenerate scatter direction
+        if (direction.near_zero())
+            direction = info.normal;
+
+        scattered = Ray(info.hit_point, direction);
         attenuation = getTexture()->getColorInTexture(
             info.texture_u, info.texture_v, info.hit_point);
 
