@@ -10,31 +10,6 @@
         <radius>0.38</radius>
         <material appearance="light" texture="solid">
             <albedo>
-                <r>0.4</r>
-                <g>0.0</g>
-                <b>0.0</b>
-            </albedo>
-        </material>
-    </object>
-
-    <object geometry="quad">
-        <point>
-            <x>8.0</x>
-            <y>4.0</y>
-            <z>0.0</z>
-        </point>
-        <vector_u>
-            <x>0.0</x>
-            <y>-8.0</y>
-            <z>0.0</z>
-        </vector_u>
-        <vector_v>
-            <x>0.0</x>
-            <y>0.0</y>
-            <z>4.0</z>
-        </vector_v>
-        <material appearance="light" texture="solid">
-            <albedo>
                 <r>1.0</r>
                 <g>1.0</g>
                 <b>1.0</b>
@@ -44,8 +19,52 @@
 
     <object geometry="box">
         <center>
-            <x>0.2</x>
-            <y>-0.8</y>
+            <x>-2.0</x>
+            <y>0.5</y>
+            <z>0.8</z>
+        </center>
+        <sizes>
+            <x>0.4</x>
+            <y>0.4</y>
+            <z>0.4</z>
+        </sizes>
+        <material appearance="light" texture="solid">
+            <albedo>
+                <r>0.8</r>
+                <g>0.6</g>
+                <b>1.0</b>
+            </albedo>
+        </material>
+    </object>
+
+    <object geometry="sphere">
+        <center>
+            <x>0.4</x>
+            <y>0.6</y>
+            <z>0.4</z>
+        </center>
+        <radius>0.4</radius>
+        <material appearance="lambertian" texture="image">
+            <filename>textures/earth.png</filename>
+        </material>
+    </object>
+
+    <object geometry="sphere">
+        <center>
+            <x>-1.8</x>
+            <y>-0.3</y>
+            <z>0.6</z>
+        </center>
+        <radius>0.6</radius>
+        <material appearance="lambertian" texture="image">
+            <filename>textures/moon.png</filename>
+        </material>
+    </object>
+
+    <object geometry="box">
+        <center>
+            <x>0.0</x>
+            <y>-0.6</y>
             <z>0.25</z>
         </center>
         <sizes>
@@ -55,70 +74,6 @@
         </sizes>
         <material appearance="lambertian" texture="image">
             <filename>textures/rubik.png</filename>
-        </material>
-    </object>
-
-    <object geometry="sphere">
-        <center>
-            <x>0.4</x>
-            <y>0.5</y>
-            <z>0.4</z>
-        </center>
-        <radius>0.4</radius>
-        <material appearance="dielectric" texture="solid">
-            <albedo>
-                <r>0.8</r>
-                <g>0.8</g>
-                <b>0.8</b>
-            </albedo>
-            <refractive_index>1.5</refractive_index>
-        </material>
-    </object>
-
-    <object geometry="quad">
-        <point>
-            <x>-1.5</x>
-            <y>1.6</y>
-            <z>0.0</z>
-        </point>
-        <vector_u>
-            <x>0.0</x>
-            <y>0.0</y>
-            <z>3.0</z>
-        </vector_u>
-        <vector_v>
-            <x>0.0</x>
-            <y>-3.0</y>
-            <z>0.0</z>
-        </vector_v>
-        <material appearance="lambertian" texture="checker">
-            <odd>
-                <r>1.0</r>
-                <g>0.2</g>
-                <b>0.8</b>
-            </odd>
-            <even>
-                <r>0.9</r>
-                <g>0.8</g>
-                <b>0.9</b>
-            </even>
-        </material>
-    </object>
-
-    <object geometry="sphere">
-        <center>
-            <x>0.4</x>
-            <y>-0.2</y>
-            <z>0.15</z>
-        </center>
-        <radius>0.15</radius>
-        <material appearance="metal" texture="solid">
-            <albedo>
-                <r>0.8</r>
-                <g>0.8</g>
-                <b>0.8</b>
-            </albedo>
-            <fuzzy>0.3</fuzzy>
         </material>
     </object>
 

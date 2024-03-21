@@ -22,10 +22,10 @@ private:
     vector m_viewport_anchor;
 
     // Anti-aliasing sampling
-    int aa_sampling = 100;
+    int aa_sampling = 500;
 
     // Recursive ray scattering
-    int max_depth = 10;
+    int max_depth = 50;
 
 public:
     Camera() {
