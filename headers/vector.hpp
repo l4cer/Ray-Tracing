@@ -4,6 +4,23 @@
 #include <cmath>
 
 
+inline float quake_sqrt(float number){
+    long i;
+
+    float x = number * 0.5;
+    float y = number;
+
+    const float threehalfs = 1.5f;
+
+    i = *(long *) &y;  // evil floating point bit level hacking
+    i = 0x5f3759df - (i >> 1); // what the ****?
+    y = *(float *) &i;
+    y = y * (threehalfs - (x * y * y));  // 1st iteration
+    y = y * (threehalfs - (x * y * y));  // 2nd iteration
+
+    return y;
+}
+
 class vector {
 public:
     double e[3];
@@ -119,7 +136,7 @@ inline vector cross(const vector &u, const vector &v) {
 }
 
 inline vector normalize(const vector &v) {
-    return v / v.norm();
+    return v * quake_sqrt(v.squared_norm());
 }
 
 inline vector lerp(const vector &u, const vector &v, double t) {

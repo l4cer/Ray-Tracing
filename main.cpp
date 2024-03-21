@@ -5,8 +5,8 @@
 
 
 int main() {
-    int width = 400;
-    int height = 400;
+    int width = 800;
+    int height = 450;
 
     HittableList world = construct_world("scene_2.xml");
 
