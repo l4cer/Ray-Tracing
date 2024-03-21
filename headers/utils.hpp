@@ -1,11 +1,12 @@
-#ifndef UTILS_HEADER
-#define UTILS_HEADER
+#ifndef UTILS_H
+#define UTILS_H
 
 #include <limits>
 #include <random>
 
 
 const double pi = 3.141592653589;
+const double tau = 6.283185307178;
 
 
 inline double deg2rad(double deg) {
@@ -45,7 +46,7 @@ inline vector random_vector(double min, double max) {
 
 inline vector random_unit_vector() {
     double phi = random_double(0.0, pi);
-    double theta = random_double(0.0, 2.0 * pi);
+    double theta = random_double(0.0, tau);
 
     return vector(cos(theta) * sin(phi), sin(theta) * sin(phi), cos(phi));
 }

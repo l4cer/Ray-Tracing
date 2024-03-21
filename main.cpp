@@ -1,18 +1,18 @@
 #include "headers/handler.hpp"
-#include "headers/render.hpp"
+#include "headers/camera.hpp"
 
-#include "scene.cpp"
+#include "source/world.cpp"
 
 
 int main() {
     int width = 400;
     int height = 225;
 
-    HittableList world = construct_scene("scene.xml");
+    HittableList world = construct_world("scene_1.xml");
 
-    ImageHandler handler = ImageHandler(width, height, "image.ppm");
+    ImageHandler handler = ImageHandler(width, height, "image.png");
 
-    Camera camera = Camera(width, height, 0.005);
+    Camera camera = Camera(width, height);
     camera.render(handler, world);
 
     return 0;

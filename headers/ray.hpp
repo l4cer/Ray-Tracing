@@ -1,5 +1,5 @@
-#ifndef RAY_HEADER
-#define RAY_HEADER
+#ifndef RAY_H
+#define RAY_H
 
 
 class Ray {
