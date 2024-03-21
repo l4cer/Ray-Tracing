@@ -142,6 +142,156 @@ public:
 };
 
 
+class Quad: public Hittable {
+private:
+    point m_point;
+    vector m_vector_u;
+    vector m_vector_v;
+    vector m_normal;
+
+public:
+    Quad() : Hittable() {
+        m_point = point(0.0, 0.0, 0.0);
+        m_vector_u = vector(1.0, 0.0, 0.0);
+        m_vector_v = vector(0.0, 1.0, 0.0);
+        m_normal = cross(m_vector_u, m_vector_v);
+    }
+
+    Quad(point t_point, vector t_vector_u, vector t_vector_v, std::shared_ptr<Material> t_material) : Hittable(t_material) {
+        m_point = t_point;
+        m_vector_u = t_vector_u;
+        m_vector_v = t_vector_v;
+        m_normal = cross(m_vector_u, m_vector_v);
+    }
+
+    point getPoint() const { return m_point; }
+
+    vector getVectorU() const { return m_vector_u; }
+
+    vector getVectorV() const { return m_vector_v; }
+
+    vector getNormal() const { return m_normal; }
+
+    bool hit(const Ray &ray, HitInfo &info) const override {
+        point origin = ray.getOrigin();
+        vector direction = ray.getDirection();
+
+        double den = dot(direction, m_normal);
+
+        if (den == 0.0) return false;
+
+        double num = dot(m_point - origin, m_normal);
+        double root = num / den;
+
+        if (root < 0.001) return false;
+
+        vector delta = ray.at(root) - m_point;
+
+        float u_pos = dot(delta, m_vector_u) / m_vector_u.squared_norm();
+        float v_pos = dot(delta, m_vector_v) / m_vector_v.squared_norm();
+
+        if (u_pos < 0 || 1 < u_pos || v_pos < 0 || 1 < v_pos) return false;
+
+        info.root = root;
+        info.hit_point = ray.at(root);
+        info.normal = m_normal;
+        info.material = getMaterial();
+
+        info.texture_u = u_pos;
+        info.texture_v = v_pos;
+
+        return true;
+    }
+
+    ~Quad() = default;
+};
+
+
+class Box: public Hittable {
+private:
+    point m_center;
+    vector m_sizes;
+
+    std::vector<std::shared_ptr<Quad>> m_faces;
+
+public:
+    Box() : Hittable() {
+        m_center = point(0.0, 0.0, 0.0);
+        m_sizes = vector(1.0, 1.0, 1.0);
+
+        createFaces();
+    }
+
+    Box(point t_center, vector t_sizes, std::shared_ptr<Material> t_material) : Hittable(t_material) {
+        m_center = t_center;
+        m_sizes = t_sizes;
+
+        createFaces();
+    }
+
+    void createFaces() {
+        vector point_A = m_center + 0.5 * m_sizes;
+        vector point_B = m_center - 0.5 * m_sizes;
+
+        vector x = vector(m_sizes[0] * 1.0, 0.0, 0.0);
+        vector y = vector(0.0, m_sizes[1] * 1.0, 0.0);
+        vector z = vector(0.0, 0.0, m_sizes[2] * 1.0);
+
+        m_faces.push_back(std::make_shared<Quad>(point_A, -x, -y, getMaterial()));
+        m_faces.push_back(std::make_shared<Quad>(point_A, -y, -z, getMaterial()));
+        m_faces.push_back(std::make_shared<Quad>(point_A, -z, -x, getMaterial()));
+        m_faces.push_back(std::make_shared<Quad>(point_B,  y,  x, getMaterial()));
+        m_faces.push_back(std::make_shared<Quad>(point_B,  z,  y, getMaterial()));
+        m_faces.push_back(std::make_shared<Quad>(point_B,  x,  z, getMaterial()));
+    }
+
+    point getCenter() const { return m_center; }
+
+    vector getSizes() const { return m_sizes; }
+
+    bool hit(const Ray &ray, HitInfo &info) const override {
+        point origin = ray.getOrigin();
+        vector direction = ray.getDirection();
+
+        int index;
+        HitInfo curr;
+
+        info.root = -1.0;
+
+        for (int i = 0; i < 6; i++) {
+            if (m_faces[i]->hit(ray, curr)) {
+                if (info.root == -1 || curr.root < info.root) {
+                    index = i;
+                    info = curr;
+                }
+            }
+        }
+
+        if (info.root == -1.0) return false;
+
+        double delta_u;
+        double delta_v;
+
+        switch (index) {
+            case 0: delta_u = 1; delta_v = 0; break;
+            case 1: delta_u = 1; delta_v = 1; break;
+            case 2: delta_u = 2; delta_v = 1; break;
+            case 3: delta_u = 1; delta_v = 2; break;
+            case 4: delta_u = 1; delta_v = 3; break;
+            case 5: delta_u = 0; delta_v = 1; break;
+            default: break;
+        }
+
+        info.texture_u = (info.texture_u + delta_u) / 4.0;
+        info.texture_v = (info.texture_v + delta_v) / 4.0;
+
+        return true;
+    }
+
+    ~Box() = default;
+};
+
+
 class HittableList: public Hittable {
 private:
     std::vector<std::shared_ptr<Hittable>> m_objects;

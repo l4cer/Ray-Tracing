@@ -84,7 +84,6 @@ public:
 
     void putPixel(color t_color) {
         if (m_extension == "ppm") {
-            std::cout << ".";
             if (m_image_file.is_open())
                 m_image_file << t_color << "\n";
 

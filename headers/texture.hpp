@@ -59,7 +59,7 @@ public:
 
     color getColorInTexture(double u, double v, const vector &t_hitpoint) const override {
         int u_tmp = static_cast<int>(std::floor(12.0 * u));
-        int v_tmp = static_cast<int>(std::floor( 6.0 * v));
+        int v_tmp = static_cast<int>(std::floor(12.0 * v));
 
         return ((u_tmp + v_tmp) % 2 == 0) ? m_color_even : m_color_odd;
     }

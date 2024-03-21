@@ -113,6 +113,23 @@ HittableList construct_world(std::string filename_xml) {
                 material
             ));
         }
+
+        if (geometry == "quad") {
+            world.add(std::make_shared<Quad>(
+                get_point(node->first_node("point")),
+                get_vector(node->first_node("vector_u")),
+                get_vector(node->first_node("vector_v")),
+                material
+            ));
+        }
+
+        if (geometry == "box") {
+            world.add(std::make_shared<Box>(
+                get_point(node->first_node("center")),
+                get_vector(node->first_node("sizes")),
+                material
+            ));
+        }
     }
 
     return world;
