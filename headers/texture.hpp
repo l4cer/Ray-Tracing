@@ -70,18 +70,18 @@ public:
 
 class ImageTexture : public Texture {
 private:
-    Image image;
+    Image m_image;
 
 public:
-    ImageTexture() : image() {}
+    ImageTexture() : m_image() {}
 
-    ImageTexture(std::string filename) : image(filename) {}
+    ImageTexture(std::string filename) : m_image(filename) {}
 
     color getColorInTexture(double u, double v, const vector &t_hitpoint) const override {
-        int i = static_cast<int>(clamp(u) * image.getWidth());
-        int j = static_cast<int>(clamp(v) * image.getHeight());
+        int i = static_cast<int>(clamp(u) * m_image.getWidth());
+        int j = static_cast<int>(clamp(v) * m_image.getHeight());
 
-        const unsigned char * pixel = image.pixelData(i, j);
+        const unsigned char * pixel = m_image.pixelData(i, j);
 
         return color(
             pixel[0] / 255.0,

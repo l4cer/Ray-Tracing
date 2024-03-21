@@ -12,7 +12,7 @@ private:
     int m_width;
     int m_height;
 
-    vector m_position;
+    point m_position;
 
     vector m_delta_u;
     vector m_delta_v;
@@ -40,11 +40,11 @@ public:
         constructor(t_width, t_height, vector(2.0, 0.0, 0.5), t_viewport_ratio);
     }
 
-    Camera(int t_width, int t_height, const vector &t_position, double t_viewport_ratio) {
+    Camera(int t_width, int t_height, const point &t_position, double t_viewport_ratio) {
         constructor(t_width, t_height, t_position, t_viewport_ratio);
     }
 
-    void constructor(int t_width, int t_height, const vector &t_position, double t_viewport_ratio) {
+    void constructor(int t_width, int t_height, const point &t_position, double t_viewport_ratio) {
         m_width = t_width;
         m_height = t_height;
 
@@ -85,9 +85,9 @@ public:
 
         color * pixels = new color[m_width * m_height];
 
-        int num_threads = omp_get_num_procs();   // Gets total number of threads
-        omp_set_dynamic(0);                 // Sets number of max threds used in parallel block
-        omp_set_num_threads(num_threads);   // Sets number of threads used in a parallel block
+        int num_threads = omp_get_num_procs();  // Gets total num of threads
+        omp_set_dynamic(0);                     // Sets num of max threds used in parallel block
+        omp_set_num_threads(num_threads);       // Sets num of threads used in a parallel block
 
         #pragma omp parallel for private(i) schedule(dynamic, 10)
         for (j = 0; j < m_height; j++) {
