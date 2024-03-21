@@ -81,14 +81,17 @@ public:
     }
 
     void render(ImageHandler &handler, const HittableList &world) {
-        color results[m_height*m_width];
-        int num_threads,i,j;
-        num_threads = omp_get_num_procs();//gets total number of threads
-        omp_set_dynamic(0);//lets code change number of max threds used in parallel block
-        omp_set_num_threads(num_threads);//sets number of threads used in a parallel block
-        #pragma omp parallel for private(i) schedule(dynamic,10)
-        for (int j = 0; j < m_height; j++) {
-            for (int i = 0; i < m_width; i++) {
+        int i, j;
+
+        color * pixels = new color[m_width * m_height];
+
+        int num_threads = omp_get_num_procs();   // Gets total number of threads
+        omp_set_dynamic(0);                 // Sets number of max threds used in parallel block
+        omp_set_num_threads(num_threads);   // Sets number of threads used in a parallel block
+
+        #pragma omp parallel for private(i) schedule(dynamic, 10)
+        for (j = 0; j < m_height; j++) {
+            for (i = 0; i < m_width; i++) {
                 color pixel_color = color(0.0, 0.0, 0.0);
 
                 // Anti-aliasing sampling
@@ -102,7 +105,7 @@ public:
                     pixel_color += rayColor(ray, world, max_depth);
                 }
 
-                results[j*m_width + i]=
+                pixels[j * m_width + i] =
                     color(
                         // Gamma correction and anti-aliasing sampling
                         std::sqrt(pixel_color[0] / aa_sampling),
@@ -112,11 +115,10 @@ public:
                 ;
             }
         }
-        for (int j = 0; j < m_height; j++) {
-            for (int i = 0; i < m_width; i++) {
-                handler.putPixel(results[j*m_width + i]);
-            }
 
+        for (j = 0; j < m_height; j++) {
+            for (i = 0; i < m_width; i++)
+                handler.putPixel(pixels[j * m_width + i]);
         }
     }
 
